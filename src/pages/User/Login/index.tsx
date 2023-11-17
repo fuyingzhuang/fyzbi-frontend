@@ -16,28 +16,6 @@ import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
 import Settings from '../../../../config/defaultSettings';
 
-const ActionIcons = () => {
-  const langClassName = useEmotionCss(({ token }) => {
-    return {
-      marginLeft: '8px',
-      color: 'rgba(0, 0, 0, 0.2)',
-      fontSize: '24px',
-      verticalAlign: 'middle',
-      cursor: 'pointer',
-      transition: 'color 0.3s',
-      '&:hover': {
-        color: token.colorPrimaryActive,
-      },
-    };
-  });
-  return (
-    <>
-      <AlipayCircleOutlined key="AlipayCircleOutlined" className={langClassName} />
-      <TaobaoCircleOutlined key="TaobaoCircleOutlined" className={langClassName} />
-      <WeiboCircleOutlined key="WeiboCircleOutlined" className={langClassName} />
-    </>
-  );
-};
 const LoginMessage: React.FC<{
   content: string;
 }> = ({ content }) => {
@@ -53,9 +31,9 @@ const LoginMessage: React.FC<{
   );
 };
 const Login: React.FC = () => {
-  const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
+  const [userLoginState] = useState<API.LoginResult>({});
   const [type, setType] = useState<string>('account');
-  const { initialState, setInitialState } = useModel('@@initialState');
+  const { setInitialState } = useModel('@@initialState');
   const containerClassName = useEmotionCss(() => {
     return {
       display: 'flex',
@@ -190,14 +168,7 @@ const Login: React.FC = () => {
             {/*<ProFormCheckbox noStyle name="autoLogin">*/}
             {/*  自动登录*/}
             {/*</ProFormCheckbox>*/}
-            <Link
-              style={{
-                float: 'right',
-              }}
-              to={'user/registers'}
-            >
-              to 没有账号 立即注册?
-            </Link>
+            <Link to={'/user/register'}>没有账号 立即注册?</Link>
           </div>
         </LoginForm>
       </div>
