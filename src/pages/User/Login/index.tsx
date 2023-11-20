@@ -19,13 +19,13 @@ const LoginMessage: React.FC<{
   return (
     <Alert
       style={{
-        marginBottom: 24,
-      }}
-      message={content}
-      type="error"
-      showIcon
-    />
-  );
+    marginBottom: 24,
+  }}
+  message={content}
+  type="error"
+  showIcon
+  />
+);
 };
 const Login: React.FC = () => {
   const [userLoginState] = useState<API.UserLoginRequest>({});
@@ -88,86 +88,86 @@ const Login: React.FC = () => {
       <Helmet>
         <title>
           {'登录'}- {Settings.title}
-        </title>
+      </title>
       </Helmet>
       <div
-        style={{
-          flex: '1',
-          padding: '32px 0',
-        }}
-      >
-        <LoginForm
-          contentStyle={{
-            minWidth: 280,
-            maxWidth: '75vw',
-          }}
-          logo={<img alt="logo" src="/logo.svg"/>}
-          title="Ambition BI"
-          subTitle={'付英壮学习项目(React + Ant Design Pro + SpringBoot + Mybatis-Plus + RabbitMQ)'}
-          // actions={['其他登录方式 :', <ActionIcons key="icons" />]}
-          onFinish={async (values) => {
-            await handleSubmit(values as API.UserLoginRequest);
-          }}
-        >
-          <Tabs
-            activeKey={type}
-            onChange={setType}
-            centered
-            items={[
-              {
-                key: 'account',
-                label: '账户密码登录',
-              },
-            ]}
-          />
+  style={{
+    flex: '1',
+      padding: '32px 0',
+  }}
+>
+  <LoginForm
+    contentStyle={{
+    minWidth: 280,
+      maxWidth: '75vw',
+  }}
+  logo={<img alt="logo" src="/logo.svg"/>}
+  title="Ambition BI"
+  subTitle={'付英壮学习项目(React + Ant Design Pro + SpringBoot + Mybatis-Plus + RabbitMQ)'}
+  // actions={['其他登录方式 :', <ActionIcons key="icons" />]}
+  onFinish={async (values) => {
+    await handleSubmit(values as API.UserLoginRequest);
+  }}
+>
+  <Tabs
+    activeKey={type}
+  onChange={setType}
+  centered
+  items={[
+      {
+        key: 'account',
+        label: '账户密码登录',
+      },
+]}
+  />
 
 
-          <>
-            <ProFormText
-              name="userAccount"
-              fieldProps={{
-                size: 'large',
-                prefix: <UserOutlined/>,
-              }}
-              placeholder={'请输入用户名'}
-              rules={[
-                {
-                  required: true,
-                  message: '用户名是必填项！',
-                },
-              ]}
-            />
-            <ProFormText.Password
-              name="userPassword"
-              fieldProps={{
-                size: 'large',
-                prefix: <LockOutlined/>,
-              }}
-              placeholder={'请输入密码'}
-              rules={[
-                {
-                  required: true,
-                  message: '密码是必填项！',
-                },
-              ]}
-            />
-          </>
+  <>
+  <ProFormText
+    name="userAccount"
+  fieldProps={{
+    size: 'large',
+      prefix: <UserOutlined/>,
+  }}
+  placeholder={'请输入用户名'}
+  rules={[
+      {
+        required: true,
+        message: '用户名是必填项！',
+      },
+]}
+  />
+  <ProFormText.Password
+  name="userPassword"
+  fieldProps={{
+    size: 'large',
+      prefix: <LockOutlined/>,
+  }}
+  placeholder={'请输入密码'}
+  rules={[
+      {
+        required: true,
+        message: '密码是必填项！',
+      },
+]}
+  />
+  </>
 
 
-          <div
-            style={{
-              marginBottom: 24,
-            }}
-          >
-            {/*<ProFormCheckbox noStyle name="autoLogin">*/}
-            {/*  自动登录*/}
-            {/*</ProFormCheckbox>*/}
-            <Link to={'/user/register'}>没有账号 立即注册?</Link>
-          </div>
-        </LoginForm>
-      </div>
-      <Footer/>
+  <div
+  style={{
+    marginBottom: 24,
+  }}
+>
+  {/*<ProFormCheckbox noStyle name="autoLogin">*/}
+  {/*  自动登录*/}
+  {/*</ProFormCheckbox>*/}
+  <Link to={'/user/register'}>没有账号 立即注册?</Link>
     </div>
-  );
+    </LoginForm>
+    </div>
+    <Footer/>
+    </div>
+);
 };
 export default Login;
