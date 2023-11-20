@@ -1,5 +1,6 @@
 ﻿export default [
   { path: '/user', layout: false, routes: [{ path: '/user/login', component: './User/Login' }] },
+  { path: '/user/register', layout: false, routes: [{ path: '/user/register', component: './User/Register' }] },
   {
     path: '/welcome',
     icon: 'smile',
@@ -19,14 +20,6 @@
     // ],
   },
 
-  {
-    icon: 'table',
-    path: '/list',
-    menu: {
-      name: '表格', // 你希望显示的菜单项文本
-    },
-    component: './TableList',
-  },
   { path: '/', redirect: '/welcome' },
   { path: '*', layout: false, component: './404' },
 ];

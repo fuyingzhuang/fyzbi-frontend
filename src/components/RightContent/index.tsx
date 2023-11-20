@@ -1,6 +1,11 @@
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import '@umijs/max';
 export type SiderTheme = 'light' | 'dark';
+
+function UmiSelectLang(props: { style: { padding: number } }) {
+  return null;
+}
+
 export const SelectLang = () => {
   return (
     <UmiSelectLang

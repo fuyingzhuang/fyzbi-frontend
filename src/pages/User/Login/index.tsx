@@ -1,24 +1,21 @@
 import Footer from '@/components/Footer';
 import {getLoginUserUsingGET, userLoginUsingPOST} from '@/services/fyzbi/userController';
-import { Link } from '@@/exports';
+import {Link} from '@@/exports';
 import {
-  AlipayCircleOutlined,
   LockOutlined,
-  TaobaoCircleOutlined,
   UserOutlined,
-  WeiboCircleOutlined,
 } from '@ant-design/icons';
-import { LoginForm, ProFormText } from '@ant-design/pro-components';
-import { useEmotionCss } from '@ant-design/use-emotion-css';
-import { Helmet, history, useModel } from '@umijs/max';
-import { Alert, message, Tabs } from 'antd';
-import React, { useState } from 'react';
-import { flushSync } from 'react-dom';
+import {LoginForm, ProFormText} from '@ant-design/pro-components';
+import {useEmotionCss} from '@ant-design/use-emotion-css';
+import {Helmet, history, useModel} from '@umijs/max';
+import {Alert, message, Tabs} from 'antd';
+import React, {useState} from 'react';
+import {flushSync} from 'react-dom';
 import Settings from '../../../../config/defaultSettings';
 
 const LoginMessage: React.FC<{
   content: string;
-}> = ({ content }) => {
+}> = ({content}) => {
   return (
     <Alert
       style={{
@@ -31,9 +28,9 @@ const LoginMessage: React.FC<{
   );
 };
 const Login: React.FC = () => {
-  const [userLoginState] = useState<API.LoginResult>({});
+  const [userLoginState] = useState<API.UserLoginRequest>({});
   const [type, setType] = useState<string>('account');
-  const { setInitialState } = useModel('@@initialState');
+  const {setInitialState} = useModel('@@initialState');
   const containerClassName = useEmotionCss(() => {
     return {
       display: 'flex',
@@ -51,6 +48,7 @@ const Login: React.FC = () => {
     const userInfo = await getLoginUserUsingGET();
     if (userInfo) {
       flushSync(() => {
+        // @ts-ignore
         setInitialState((s) => ({
           ...s,
           currentUser: userInfo,
@@ -69,6 +67,7 @@ const Login: React.FC = () => {
         message.success(defaultLoginSuccessMessage);
         await fetchUserInfo();
         const urlParams = new URL(window.location.href).searchParams;
+        // 刷新页面
         history.push(urlParams.get('redirect') || '/');
         return;
       } else {
@@ -84,7 +83,6 @@ const Login: React.FC = () => {
       message.error(defaultLoginFailureMessage);
     }
   };
-  const { status, type: loginType } = userLoginState;
   return (
     <div className={containerClassName}>
       <Helmet>
@@ -103,7 +101,7 @@ const Login: React.FC = () => {
             minWidth: 280,
             maxWidth: '75vw',
           }}
-          logo={<img alt="logo" src="/logo.svg" />}
+          logo={<img alt="logo" src="/logo.svg"/>}
           title="Ambition BI"
           subTitle={'付英壮学习项目(React + Ant Design Pro + SpringBoot + Mybatis-Plus + RabbitMQ)'}
           // actions={['其他登录方式 :', <ActionIcons key="icons" />]}
@@ -123,43 +121,39 @@ const Login: React.FC = () => {
             ]}
           />
 
-          {status === 'error' && loginType === 'account' && (
-            <LoginMessage content={'错误的用户名和密码(admin/ant.design)'} />
-          )}
-          {type === 'account' && (
-            <>
-              <ProFormText
-                name="userAccount"
-                fieldProps={{
-                  size: 'large',
-                  prefix: <UserOutlined />,
-                }}
-                placeholder={'请输入用户名'}
-                rules={[
-                  {
-                    required: true,
-                    message: '用户名是必填项！',
-                  },
-                ]}
-              />
-              <ProFormText.Password
-                name="userPassword"
-                fieldProps={{
-                  size: 'large',
-                  prefix: <LockOutlined />,
-                }}
-                placeholder={'请输入密码'}
-                rules={[
-                  {
-                    required: true,
-                    message: '密码是必填项！',
-                  },
-                ]}
-              />
-            </>
-          )}
 
-          {status === 'error' && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
+          <>
+            <ProFormText
+              name="userAccount"
+              fieldProps={{
+                size: 'large',
+                prefix: <UserOutlined/>,
+              }}
+              placeholder={'请输入用户名'}
+              rules={[
+                {
+                  required: true,
+                  message: '用户名是必填项！',
+                },
+              ]}
+            />
+            <ProFormText.Password
+              name="userPassword"
+              fieldProps={{
+                size: 'large',
+                prefix: <LockOutlined/>,
+              }}
+              placeholder={'请输入密码'}
+              rules={[
+                {
+                  required: true,
+                  message: '密码是必填项！',
+                },
+              ]}
+            />
+          </>
+
+
           <div
             style={{
               marginBottom: 24,
@@ -172,7 +166,7 @@ const Login: React.FC = () => {
           </div>
         </LoginForm>
       </div>
-      <Footer />
+      <Footer/>
     </div>
   );
 };
