@@ -1,217 +1,116 @@
-import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
-import {
-  Button,
-  Checkbox,
-  Col,
-  ColorPicker,
-  Form,
-  InputNumber,
-  Radio,
-  Rate,
-  Row,
-  Select,
-  Slider,
-  Space,
-  Switch, Typography,
-  Upload,
-} from 'antd';
+import { genChartByAiUsingPOST } from '@/services/fyzbi/chartController';
+import { UploadOutlined } from '@ant-design/icons';
+import {Button, Card, Col, Divider, Form, Input, message, Row, Select, Space, Spin, Upload} from 'antd';
+import TextArea from 'antd/es/input/TextArea';
+import React, { useState } from 'react';
+import ReactECharts from 'echarts-for-react';
 
-const { Option } = Select;
+/**
+ * 添加图表页面
+ * @constructor
+ */
+const AddChart: React.FC = () => {
+  const [chart, setChart] = useState<API.BiResponse>();
+  const [option, setOption] = useState<any>();
+  const [submitting, setSubmitting] = useState<boolean>(false);
 
-const formItemLayout = {
-  labelCol: { span: 6 },
-  wrapperCol: { span: 14 },
+  /**
+   * 提交
+   * @param values
+   */
+  const onFinish = async (values: any) => {
+    // 避免重复提交
+    if (submitting) {
+      return;
+    }
+    setSubmitting(true);
+    setChart(undefined);
+    setOption(undefined);
+    // 对接后端，上传数据
+    const params = {
+      ...values,
+      file: undefined,
+    };
+    try {
+      const res = await genChartByAiUsingPOST(params, {}, values.file.file.originFileObj);
+      if (!res?.data) {
+        message.error('分析失败');
+      } else {
+        message.success('分析成功');
+        const chartOption = JSON.parse(res.data.genChart ?? '');
+        if (!chartOption) {
+          throw new Error('图表代码解析错误')
+        } else {
+          setChart(res.data);
+          setOption(chartOption);
+        }
+      }
+    } catch (e: any) {
+      message.error('分析失败，' + e.message);
+    }
+    setSubmitting(false);
+  };
+
+  return (
+    <div className="add-chart">
+      <Row gutter={24}>
+        <Col span={12}>
+          <Card title="智能分析">
+            <Form name="addChart" labelAlign="left" labelCol={{ span: 4 }}
+                  wrapperCol={{ span: 16 }} onFinish={onFinish} initialValues={{}}>
+              <Form.Item
+                name="goal"
+                label="分析目标"
+                rules={[{ required: true, message: '请输入分析目标' }]}
+              >
+                <TextArea placeholder="请输入你的分析需求，比如：分析网站用户的增长情况" />
+              </Form.Item>
+              <Form.Item name="name" label="图表名称">
+                <Input placeholder="请输入图表名称" />
+              </Form.Item>
+              <Form.Item name="chartType" label="图表类型">
+                <Select
+                  options={[
+                    { value: '折线图', label: '折线图' },
+                    { value: '柱状图', label: '柱状图' },
+                    { value: '堆叠图', label: '堆叠图' },
+                    { value: '饼图', label: '饼图' },
+                    { value: '雷达图', label: '雷达图' },
+                  ]}
+                />
+              </Form.Item>
+              <Form.Item name="file" label="原始数据">
+                <Upload name="file" maxCount={1}>
+                  <Button icon={<UploadOutlined />}>上传 CSV 文件</Button>
+                </Upload>
+              </Form.Item>
+
+              <Form.Item wrapperCol={{ span: 16, offset: 4 }}>
+                <Space>
+                  <Button type="primary" htmlType="submit" loading={submitting} disabled={submitting}>
+                    提交
+                  </Button>
+                  <Button htmlType="reset">重置</Button>
+                </Space>
+              </Form.Item>
+            </Form>
+          </Card>
+        </Col>
+        <Col span={12}>
+          <Card title="分析结论">
+            {chart?.genResult ?? <div>请先在左侧进行提交</div>}
+            <Spin spinning={submitting}/>
+          </Card>
+          <Divider />
+          <Card title="可视化图表">
+            {
+              option ? <ReactECharts option={option} /> : <div>请先在左侧进行提交</div>
+            }
+            <Spin spinning={submitting}/>
+          </Card>
+        </Col>
+      </Row>
+    </div>
+  );
 };
-
-const normFile = (e: any) => {
-  console.log('Upload event:', e);
-  if (Array.isArray(e)) {
-    return e;
-  }
-  return e?.fileList;
-};
-
-const onFinish = (values: any) => {
-  console.log('Received values of form: ', values);
-};
-
-const {Title} = Typography;
-import {history} from '@umijs/max';
-
-const unique_id = 'add-chart';
-
-const ChartAdd: React.FC = () => (
-  <div id={unique_id}>
-    添加图表
-    <Form
-      name="validate_other"
-      {...formItemLayout}
-      onFinish={onFinish}
-      initialValues={{
-        'input-number': 3,
-        'checkbox-group': ['A', 'B'],
-        rate: 3.5,
-        'color-picker': null,
-      }}
-      style={{ maxWidth: 600 }}
-    >
-      <Form.Item label="Plain Text">
-        <span className="ant-form-text">China</span>
-      </Form.Item>
-      <Form.Item
-        name="select"
-        label="Select"
-        hasFeedback
-        rules={[{ required: true, message: 'Please select your country!' }]}
-      >
-        <Select placeholder="Please select a country">
-          <Option value="china">China</Option>
-          <Option value="usa">U.S.A</Option>
-        </Select>
-      </Form.Item>
-
-      <Form.Item
-        name="select-multiple"
-        label="Select[multiple]"
-        rules={[{ required: true, message: 'Please select your favourite colors!', type: 'array' }]}
-      >
-        <Select mode="multiple" placeholder="Please select favourite colors">
-          <Option value="red">Red</Option>
-          <Option value="green">Green</Option>
-          <Option value="blue">Blue</Option>
-        </Select>
-      </Form.Item>
-
-      <Form.Item label="InputNumber">
-        <Form.Item name="input-number" noStyle>
-          <InputNumber min={1} max={10} />
-        </Form.Item>
-        <span className="ant-form-text" style={{ marginLeft: 8 }}>
-        machines
-      </span>
-      </Form.Item>
-
-      <Form.Item name="switch" label="Switch" valuePropName="checked">
-        <Switch />
-      </Form.Item>
-
-      <Form.Item name="slider" label="Slider">
-        <Slider
-          marks={{
-            0: 'A',
-            20: 'B',
-            40: 'C',
-            60: 'D',
-            80: 'E',
-            100: 'F',
-          }}
-        />
-      </Form.Item>
-
-      <Form.Item name="radio-group" label="Radio.Group">
-        <Radio.Group>
-          <Radio value="a">item 1</Radio>
-          <Radio value="b">item 2</Radio>
-          <Radio value="c">item 3</Radio>
-        </Radio.Group>
-      </Form.Item>
-
-      <Form.Item
-        name="radio-button"
-        label="Radio.Button"
-        rules={[{ required: true, message: 'Please pick an item!' }]}
-      >
-        <Radio.Group>
-          <Radio.Button value="a">item 1</Radio.Button>
-          <Radio.Button value="b">item 2</Radio.Button>
-          <Radio.Button value="c">item 3</Radio.Button>
-        </Radio.Group>
-      </Form.Item>
-
-      <Form.Item name="checkbox-group" label="Checkbox.Group">
-        <Checkbox.Group>
-          <Row>
-            <Col span={8}>
-              <Checkbox value="A" style={{ lineHeight: '32px' }}>
-                A
-              </Checkbox>
-            </Col>
-            <Col span={8}>
-              <Checkbox value="B" style={{ lineHeight: '32px' }} disabled>
-                B
-              </Checkbox>
-            </Col>
-            <Col span={8}>
-              <Checkbox value="C" style={{ lineHeight: '32px' }}>
-                C
-              </Checkbox>
-            </Col>
-            <Col span={8}>
-              <Checkbox value="D" style={{ lineHeight: '32px' }}>
-                D
-              </Checkbox>
-            </Col>
-            <Col span={8}>
-              <Checkbox value="E" style={{ lineHeight: '32px' }}>
-                E
-              </Checkbox>
-            </Col>
-            <Col span={8}>
-              <Checkbox value="F" style={{ lineHeight: '32px' }}>
-                F
-              </Checkbox>
-            </Col>
-          </Row>
-        </Checkbox.Group>
-      </Form.Item>
-
-      <Form.Item name="rate" label="Rate">
-        <Rate />
-      </Form.Item>
-
-      <Form.Item
-        name="upload"
-        label="Upload"
-        valuePropName="fileList"
-        getValueFromEvent={normFile}
-        extra="longgggggggggggggggggggggggggggggggggg"
-      >
-        <Upload name="logo" action="/upload.do" listType="picture">
-          <Button icon={<UploadOutlined />}>Click to upload</Button>
-        </Upload>
-      </Form.Item>
-      <Form.Item label="Dragger">
-        <Form.Item name="dragger" valuePropName="fileList" getValueFromEvent={normFile} noStyle>
-          <Upload.Dragger name="files" action="/upload.do">
-            <p className="ant-upload-drag-icon">
-              <InboxOutlined />
-            </p>
-            <p className="ant-upload-text">Click or drag file to this area to upload</p>
-            <p className="ant-upload-hint">Support for a single or bulk upload.</p>
-          </Upload.Dragger>
-        </Form.Item>
-      </Form.Item>
-      <Form.Item
-        name="color-picker"
-        label="ColorPicker"
-        rules={[{ required: true, message: 'color is required!' }]}
-      >
-        <ColorPicker />
-      </Form.Item>
-
-      <Form.Item wrapperCol={{ span: 12, offset: 6 }}>
-        <Space>
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-          <Button htmlType="reset">reset</Button>
-        </Space>
-      </Form.Item>
-    </Form>
-    );
-
-  </div>
-
-);
-
-export default ChartAdd;
+export default AddChart;

@@ -5,8 +5,9 @@
     path: '/welcome',
     icon: 'smile',
     menu: {
-      name: 'Welcome', // 你希望显示的菜单项文本
+      name: '智能分析', // 你希望显示的菜单项文本
     },
+    component: './Chart/AddChart',
   },
   {
     path: '/admin',
