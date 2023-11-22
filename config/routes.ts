@@ -2,12 +2,20 @@
   { path: '/user', layout: false, routes: [{ path: '/user/login', component: './User/Login' }] },
   { path: '/user/register', layout: false, routes: [{ path: '/user/register', component: './User/Register' }] },
   {
-    path: '/welcome',
+    path: '/analysis',
     icon: 'smile',
     menu: {
       name: '智能分析', // 你希望显示的菜单项文本
     },
     component: './Chart/AddChart',
+  },
+  {
+    path: '/chart/list',
+    icon: 'areaChart',
+    menu: {
+      name: '图表管理', // 你希望显示的菜单项文本
+    },
+    component: './Chart/ChartList',
   },
   {
     path: '/admin',
@@ -21,6 +29,6 @@
     // ],
   },
 
-  { path: '/', redirect: '/welcome' },
+  { path: '/', redirect: '/analysis' },
   { path: '*', layout: false, component: './404' },
 ];

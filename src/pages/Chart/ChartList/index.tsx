@@ -1,116 +1,171 @@
-import { genChartByAiUsingPOST } from '@/services/fyzbi/chartController';
-import { UploadOutlined } from '@ant-design/icons';
-import {Button, Card, Col, Divider, Form, Input, message, Row, Select, Space, Spin, Upload} from 'antd';
+import {listMyChartByPageUsingPOST} from '@/services/fyzbi/chartController';
+import {UploadOutlined} from '@ant-design/icons';
+import {
+  Avatar,
+  Button,
+  Card,
+  Col,
+  Divider,
+  Form,
+  Input,
+  List,
+  message,
+  Result,
+  Row,
+  Select,
+  Space,
+  Spin,
+  Upload
+} from 'antd'
+import Search from "antd/es/input/Search";
 import TextArea from 'antd/es/input/TextArea';
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import ReactECharts from 'echarts-for-react';
-
+import { useModel } from '@@/exports';
 /**
- * 添加图表页面
+ * 图表列表页面
  * @constructor
  */
-const AddChart: React.FC = () => {
-  const [chart, setChart] = useState<API.BiResponse>();
-  const [option, setOption] = useState<any>();
-  const [submitting, setSubmitting] = useState<boolean>(false);
+const ChartList: React.FC = () => {
+  // 定义一个初始化的数据
+  const initRequestParams = {
+    // chartType: "",
+    current: 1,
+    // goal: "",
+    name: "",
+    pageSize: 10,
+  }
+  // 获取当前登陆用户
+  const { initialState } = useModel('@@initialState');
+  const { currentUser } = initialState ?? {};
 
-  /**
-   * 提交
-   * @param values
-   */
-  const onFinish = async (values: any) => {
-    // 避免重复提交
-    if (submitting) {
-      return;
-    }
-    setSubmitting(true);
-    setChart(undefined);
-    setOption(undefined);
-    // 对接后端，上传数据
-    const params = {
-      ...values,
-      file: undefined,
-    };
+
+  // 定义一个查询的参数
+  const [searchParams, setSearchParams] = useState<API.ChartQueryRequest>({...initRequestParams});
+// 定义一个loading
+  const [loading, setLoading] = useState<boolean>(false);
+
+  // 定义一个初始化的组数 用来存放数据
+  const [chartList, setChartList] = useState<API.Chart[]>();
+  // 定义一个总数 用于分页显示
+  const [total, setTotal] = useState<number>(0);
+  // 发送请求获取数据
+  const getChartList = async () => {
     try {
-      const res = await genChartByAiUsingPOST(params, {}, values.file.file.originFileObj);
-      if (!res?.data) {
-        message.error('分析失败');
+      const res = await listMyChartByPageUsingPOST(searchParams);
+      if (res.code == 200) {
+        // @ts-ignore
+        setChartList(res.data.records ?? []);
+        // @ts-ignore
+        setTotal(res.data.total ?? 0)
       } else {
-        message.success('分析成功');
-        const chartOption = JSON.parse(res.data.genChart ?? '');
-        if (!chartOption) {
-          throw new Error('图表代码解析错误')
-        } else {
-          setChart(res.data);
-          setOption(chartOption);
-        }
+        message.error('获取图表列表失败')
       }
     } catch (e: any) {
-      message.error('分析失败，' + e.message);
+      message.error('获取图表列表失败', e.message)
     }
-    setSubmitting(false);
-  };
+
+
+  }
+
+
+
+
+// 页面加载完成后发送请求
+  useEffect(() => {
+      getChartList();
+    }
+    // 数据发生变化的时候 重新触发该函数
+    , [searchParams]);
 
   return (
-    <div className="add-chart">
-      <Row gutter={24}>
-        <Col span={12}>
-          <Card title="智能分析">
-            <Form name="addChart" labelAlign="left" labelCol={{ span: 4 }}
-                  wrapperCol={{ span: 16 }} onFinish={onFinish} initialValues={{}}>
-              <Form.Item
-                name="goal"
-                label="分析目标"
-                rules={[{ required: true, message: '请输入分析目标' }]}
-              >
-                <TextArea placeholder="请输入你的分析需求，比如：分析网站用户的增长情况" />
-              </Form.Item>
-              <Form.Item name="name" label="图表名称">
-                <Input placeholder="请输入图表名称" />
-              </Form.Item>
-              <Form.Item name="chartType" label="图表类型">
-                <Select
-                  options={[
-                    { value: '折线图', label: '折线图' },
-                    { value: '柱状图', label: '柱状图' },
-                    { value: '堆叠图', label: '堆叠图' },
-                    { value: '饼图', label: '饼图' },
-                    { value: '雷达图', label: '雷达图' },
-                  ]}
-                />
-              </Form.Item>
-              <Form.Item name="file" label="原始数据">
-                <Upload name="file" maxCount={1}>
-                  <Button icon={<UploadOutlined />}>上传 CSV 文件</Button>
-                </Upload>
-              </Form.Item>
+    <div className="chart-list">
+      <div>
+        <Search placeholder="请输入图表名称" enterButton loading={loading} onSearch={(value) => {
+          // 设置搜索条件
+          setSearchParams({
+            ...initRequestParams,
+            name: value,
+          })
+        }}/>
+      </div>
+      <Divider />
+      <div className="margin-16" />
+      <List
+        grid={{
+          gutter: 16,
+          xs: 1,
+          sm: 1,
+          md: 1,
+          lg: 2,
+          xl: 2,
+          xxl: 2,
+        }}
+        pagination={{
+          onChange: (page, pageSize) => {
+            setSearchParams({
+              ...searchParams,
+              current: page,
+              pageSize,
+            })
+          },
+          current: searchParams.current,
+          pageSize: searchParams.pageSize,
+          total: total,
+        }}
+        loading={loading}
+        dataSource={chartList}
+        renderItem={(item) => (
+          <List.Item key={item.id}>
+            <Card style={{ width: '100%' }}>
+              <List.Item.Meta
+                avatar={<Avatar src={currentUser && currentUser.userAvatar} />}
+                title={item.name}
+                description={item.chartType ? '图表类型：' + item.chartType : undefined}
+              />
 
-              <Form.Item wrapperCol={{ span: 16, offset: 4 }}>
-                <Space>
-                  <Button type="primary" htmlType="submit" loading={submitting} disabled={submitting}>
-                    提交
-                  </Button>
-                  <Button htmlType="reset">重置</Button>
-                </Space>
-              </Form.Item>
-            </Form>
-          </Card>
-        </Col>
-        <Col span={12}>
-          <Card title="分析结论">
-            {chart?.genResult ?? <div>请先在左侧进行提交</div>}
-            <Spin spinning={submitting}/>
-          </Card>
-          <Divider />
-          <Card title="可视化图表">
-            {
-              option ? <ReactECharts option={option} /> : <div>请先在左侧进行提交</div>
-            }
-            <Spin spinning={submitting}/>
-          </Card>
-        </Col>
-      </Row>
+              <>
+                {
+                  item.status === 'wait' && <>
+                    <Result
+                      status="warning"
+                      title="待生成"
+                      subTitle={item.execMessage ?? '当前图表生成队列繁忙，请耐心等候'}
+                    />
+                  </>
+                }
+                {
+                  item.status === 'running' && <>
+                    <Result
+                      status="info"
+                      title="图表生成中"
+                      subTitle={item.execMessage}
+                    />
+                  </>
+                }
+                {
+                  item.status === 'succeed' && <>
+                    <div style={{ marginBottom: 16 }} />
+                    <p>{'分析目标：' + item.goal}</p>
+                    <div style={{ marginBottom: 16 }} />
+                    <ReactECharts option={item.genChart && JSON.parse(item.genChart)} />
+                  </>
+                }
+                {
+                  item.status === 'failed' && <>
+                    <Result
+                      status="error"
+                      title="图表生成失败"
+                      subTitle={item.execMessage}
+                    />
+                  </>
+                }
+              </>
+            </Card>
+          </List.Item>
+        )}
+      />
     </div>
   );
 };
-export default AddChart;
+export default ChartList;
