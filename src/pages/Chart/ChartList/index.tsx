@@ -2,20 +2,11 @@ import {listMyChartByPageUsingPOST} from '@/services/fyzbi/chartController';
 import {UploadOutlined} from '@ant-design/icons';
 import {
   Avatar,
-  Button,
   Card,
-  Col,
   Divider,
-  Form,
-  Input,
   List,
   message,
   Result,
-  Row,
-  Select,
-  Space,
-  Spin,
-  Upload
 } from 'antd'
 import Search from "antd/es/input/Search";
 import TextArea from 'antd/es/input/TextArea';

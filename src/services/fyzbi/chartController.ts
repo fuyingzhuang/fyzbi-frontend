@@ -109,7 +109,7 @@ export async function genChartByAiAsyncUsingPOST(
     }
   });
 
-  return request<API.BaseResponseBiResponse_>('/api/chart/gen/async', {
+  return request<API.BaseResponseBiResponse_>('/api/bi/chart/gen/async', {
     method: 'POST',
     params: {
       ...params,

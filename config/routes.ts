@@ -10,6 +10,14 @@
     component: './Chart/AddChart',
   },
   {
+    path: '/async',
+    icon: 'barChart',
+    menu: {
+      name: '智能分析(异步)', // 你希望显示的菜单项文本
+    },
+    component: './Chart/AddChartAsync',
+  },
+  {
     path: '/chart/list',
     icon: 'areaChart',
     menu: {
