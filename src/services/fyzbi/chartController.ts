@@ -252,3 +252,18 @@ export async function updateChartUsingPOST(
     ...(options || {}),
   });
 }
+
+
+/** deleteChart POST /api/chart/analyze/data */
+export async function getAnalyzeRawData(
+  body: API.DeleteRequest,
+) {
+  return request<API.BaseResponseBoolean_>('/api/bi/chart/analyze/data', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+
+  });
+}
