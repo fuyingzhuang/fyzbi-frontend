@@ -24,7 +24,7 @@ const Introduction: React.FC = () => {
       description: '4. 为防止某用户恶意占用系统资源,基于 Redisson 的 RateLimiter 实现分布式限流,控制单用户访问的频率',
     },
     {
-      description: '5. 考虑到单个图表的原始数据量较大,基于 MyBatis +业务层构建自定义 SQL 实现了对每份原始数据的分表存储,提高查询性能 20％',
+      description: '5. 考虑到单个图表的原始数据量较大, 采用 MongoDB实现了对每份原始数据的分表存储,提高查询性能 20％',
     },
     {
       description: '6. 由于 AIGC 的响应时间较长,基于自定义 I0 密集型线程池 + 任务 队列实现了 AIGC 的并发执行和异步化,提交任务后即可响应前端,提高用户体验。',
@@ -32,6 +32,7 @@ const Introduction: React.FC = () => {
     {
       description: '7. 由于本地任务队列重启丢失数据,使用 RabbitMQ（分布式消息队列）来接受并持久化任务消息,通过 Direct 交换机转发给解耦的Al 生成模块消费并处理任务,提高了系统的可靠性',
     },
+
 
   ];
 
@@ -61,9 +62,7 @@ const Introduction: React.FC = () => {
           title="项目描述"
           extra={<a href="#">More</a>}
         >
-          基于 Spring Boot + MQ + AIGC(+ React) 的智能数据分析平台。区别于传统 Bl,用户只需要导入原始数据
-          集、并输入分析诉求,就能自动生成可视化图表及分析结论,实现数据分析的降本增效（或者降低数据分析的人工
-          成本、提高数据分析效率等）。
+          基于 Spring Boot + MQ + AIGC(+ React) 的智能数据分析平台。区别于传统 Bl,用户只需要导入原始数据集、并输入分析诉求,就能自动生成可视化图表及分析结论,实现数据分析的降本增效。
         </Card>
         <Divider/> {/*分割线*/}
 
