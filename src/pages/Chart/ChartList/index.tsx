@@ -1,5 +1,5 @@
-import {getAnalyzeRawData, listMyChartByPageUsingPOST} from '@/services/fyzbi/chartController';
-import {EyeOutlined, UploadOutlined} from '@ant-design/icons';
+import {deleteChartUsingPOST, getAnalyzeRawData, listMyChartByPageUsingPOST} from '@/services/fyzbi/chartController';
+import {DeleteOutlined, EyeOutlined, UploadOutlined} from '@ant-design/icons';
 import {
   Avatar, Button,
   Card,
@@ -13,6 +13,7 @@ import TextArea from 'antd/es/input/TextArea';
 import React, {useEffect, useState} from 'react';
 import ReactECharts from 'echarts-for-react';
 import {useModel} from '@@/exports';
+import {DeleteOutline} from "antd-mobile-icons";
 
 /**
  * 图表列表页面
@@ -86,6 +87,11 @@ const ChartList: React.FC = () => {
     setVisible(false);
   };
 
+// 定义一个右对齐的样式
+  const rightStyle = {
+   marginLeft:'50%',
+
+  }
 
   // 定义一个方法 用来根据id查询图表的原始数据
   const getChartOriginData = async (id: number) => {
@@ -102,8 +108,26 @@ const ChartList: React.FC = () => {
     }
   }
 
+  //根据id删除图表
+  const deleteChart = async (id: number) => {
+    try {
+      const res = await deleteChartUsingPOST({id: id});
+      if (res.code == 200) {
+        // @ts-ignore
+        message.success('删除图表成功')
+        // 重新加载数据
+        getChartList();
+      } else {
+        message.error('删除图表失败')
+      }
+    } catch (e: any) {
+      message.error('删除图表失败', e.message)
+    }
+  }
 
 
+
+  // @ts-ignore
   return (
     <div className="chart-list">
       <div>
@@ -198,6 +222,17 @@ const ChartList: React.FC = () => {
                 setVisible(true);
 
               }}>查看原始数据</Button>
+            {/*  删除图表数据*/}
+              <Button type="primary"
+                      style={rightStyle}
+                      danger icon={<DeleteOutlined/>} onClick={() => {
+                // 触法对话框 传入数据 发送请求 获取数据 并且显示
+                //  得到当前选中的图表的id
+                deleteChart(item.id ?? 0);
+
+              }}>删除图表</Button>
+              <div className="margin-16"/>
+
 
             </Card>
 

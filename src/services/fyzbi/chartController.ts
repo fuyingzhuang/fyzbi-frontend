@@ -22,7 +22,7 @@ export async function deleteChartUsingPOST(
   body: API.DeleteRequest,
   options?: { [key: string]: any },
 ) {
-  return request<API.BaseResponseBoolean_>('/api/chart/delete', {
+  return request<API.BaseResponseBoolean_>('/api/bi/chart/delete', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -254,7 +254,7 @@ export async function updateChartUsingPOST(
 }
 
 
-/** deleteChart POST /api/chart/analyze/data */
+/** getAnalyzeRawData POST /api/chart/analyze/data */
 export async function getAnalyzeRawData(
   body: API.DeleteRequest,
 ) {
