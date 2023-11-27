@@ -1,6 +1,6 @@
 import {  genChartByAiAsyncUsingMQPOST} from '@/services/fyzbi/chartController';
 import { UploadOutlined } from '@ant-design/icons';
-import { Button, Card, Form, Input, message, Select, Space, Upload } from 'antd';
+import {Button, Card, Divider, Form, Input, message, Select, Space, Upload} from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import TextArea from 'antd/es/input/TextArea';
 import React, { useState } from 'react';
@@ -45,6 +45,11 @@ const AddChartAsync: React.FC = () => {
 
   return (
     <div className="add-chart-async">
+      {/*下载测试数据*/}
+      <Button title="下载测试数据" type={"primary"}>
+        <a href="https://edu-fyz.oss-cn-beijing.aliyuncs.com/2021/11/16/test_excel.xlsx" download="test.csv">下载测试数据</a>
+      </Button>
+      <Divider />
       <Card title="智能分析">
         <Form
           form={form}

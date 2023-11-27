@@ -53,6 +53,11 @@ const AddChart: React.FC = () => {
 
   return (
     <div className="add-chart">
+      {/*下载测试数据*/}
+      <Button title="下载测试数据" type={"primary"}>
+        <a href="https://edu-fyz.oss-cn-beijing.aliyuncs.com/2021/11/16/test_excel.xlsx" download="test.csv">下载测试数据</a>
+      </Button>
+      <Divider />
       <Row gutter={24}>
         <Col span={12}>
           <Card title="智能分析">
