@@ -89,7 +89,7 @@ const ChartList: React.FC = () => {
 
 // 定义一个右对齐的样式
   const rightStyle = {
-   marginLeft:'50%',
+    marginLeft: '50%',
 
   }
 
@@ -99,7 +99,7 @@ const ChartList: React.FC = () => {
       const res = await getAnalyzeRawData({id: id});
       if (res.code == 200) {
         // @ts-ignore
-       setRawData(res.data)
+        setRawData(res.data)
       } else {
         message.error('获取图表原始数据失败')
       }
@@ -124,7 +124,6 @@ const ChartList: React.FC = () => {
       message.error('删除图表失败', e.message)
     }
   }
-
 
 
   // @ts-ignore
@@ -222,14 +221,28 @@ const ChartList: React.FC = () => {
                 setVisible(true);
 
               }}>查看原始数据</Button>
-            {/*  删除图表数据*/}
+              {/*  删除图表数据*/}
               <Button type="primary"
                       style={rightStyle}
                       danger icon={<DeleteOutlined/>} onClick={() => {
                 // 触法对话框 传入数据 发送请求 获取数据 并且显示
                 //  得到当前选中的图表的id
-                deleteChart(item.id ?? 0);
+                //询问用户是否删除
+                const chartId = item.id ?? 0;
 
+                Modal.confirm({
+                  title: '确定要删除该图表吗？',
+                  okText: '确定',
+                  cancelText: '取消',
+                  onOk() {
+                    deleteChart(chartId);
+                  },
+                  onCancel() {
+                  //  显示取消删除
+                    message.info('取消删除')
+                  },
+
+                });
               }}>删除图表</Button>
               <div className="margin-16"/>
 
